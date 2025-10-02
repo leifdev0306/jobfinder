@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block title %}Postulaciones - {{ offer.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'company_dashboard' %}">Panel Empresa</a></li>
+                    <li class="breadcrumb-item active">Postulaciones - {{ offer.title }}</li>
+                </ol>
+            </nav>
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>Postulaciones para: {{ offer.title }}</h1>
+                <span class="badge bg-primary fs-6">{{ applications.count }} postulaciones</span>
+            </div>
+
+            {% if applications %}
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Candidato</th>
+                                        <th>Fecha</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for application in applications %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ application.candidate.user.get_full_name }}</strong><br>
+                                            <small class="text-muted">{{ application.candidate.user.email }}</small><br>
+                                            <small class="text-muted">{{ application.candidate.location }}</small>
+                                        </td>
+                                        <td>{{ application.application_date|date:"d/m/Y H:i" }}</td>
+                                        <td>
+                                            <span class="badge 
+                                                {% if application.status == 'pendiente' %}bg-warning
+                                                {% elif application.status == 'revisada' %}bg-info
+                                                {% elif application.status == 'contactado' %}bg-success
+                                                {% else %}bg-danger{% endif %}">
+                                                {{ application.get_status_display }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="{% url 'update_application_status' application.pk %}" 
+                                                   class="btn btn-outline-primary" title="Cambiar Estado">
+                                                    ✏️
+                                                </a>
+                                                <button type="button" class="btn btn-outline-info" 
+                                                        data-bs-toggle="modal" data-bs-target="#modal{{ application.pk }}"
+                                                        title="Ver Carta">
+                                                    📄
+                                                </button>
+                                            </div>
+
+                                            <!-- Modal para la carta de presentación -->
+                                            <div class="modal fade" id="modal{{ application.pk }}" tabindex="-1">
+                                                <div class="modal-dialog modal-lg">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">Carta de Presentación</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p><strong>Candidato:</strong> {{ application.candidate.user.get_full_name }}</p>
+                                                            <p><strong>Oferta:</strong> {{ application.job_offer.title }}</p>
+                                                            <hr>
+                                                            <p>{{ application.cover_letter|linebreaks }}</p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <div class="card">
+                        <div class="card-body py-5">
+                            <h4 class="text-muted mb-3">No hay postulaciones para esta oferta.</h4>
+                            <p class="text-muted">Los candidatos aparecerán aquí cuando se postulen a tu oferta.</p>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

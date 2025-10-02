@@ -1,0 +1,374 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ offer.title }} - {{ offer.company.name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Header de la Oferta -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card glass-card fade-in-up">
+                <div class="card-body">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-decoration-none">Inicio</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'job_offers' %}" class="text-decoration-none">Ofertas</a></li>
+                            <li class="breadcrumb-item active">{{ offer.title|truncatewords:5 }}</li>
+                        </ol>
+                    </nav>
+                    
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h1 class="h2 mb-2">{{ offer.title }}</h1>
+                            <p class="lead mb-2">
+                                <i class="fas fa-building me-2 text-primary"></i>
+                                <strong>{{ offer.company.name }}</strong>
+                            </p>
+                            <div class="d-flex flex-wrap gap-2 mb-2">
+                                <span class="badge bg-primary fs-6">{{ offer.category }}</span>
+                                <span class="badge bg-success fs-6">
+                                    <i class="fas fa-map-marker-alt me-1"></i>{{ offer.location }}
+                                </span>
+                                {% if offer.salary %}
+                                <span class="badge bg-warning fs-6">
+                                    <i class="fas fa-dollar-sign me-1"></i>{{ offer.salary }}
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            {% if offer.is_expired %}
+                            <span class="badge bg-danger fs-6">
+                                <i class="fas fa-clock me-1"></i>Oferta Expirada
+                            </span>
+                            {% else %}
+                            <span class="badge bg-success fs-6">
+                                <i class="fas fa-bolt me-1"></i>Oferta Activa
+                            </span>
+                            {% endif %}
+                            <div class="mt-2">
+                                <small class="text-muted">
+                                    Publicado {{ offer.publication_date|timesince }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Información Principal -->
+        <div class="col-lg-8 mb-4">
+            <!-- Descripción del Puesto -->
+            <div class="card fade-in-up">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-file-alt me-2"></i>Descripción del Puesto
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="prose">
+                        {{ offer.description|linebreaks }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Requisitos -->
+            <div class="card mt-4 fade-in-up">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-list-check me-2"></i>Requisitos
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="prose">
+                        {{ offer.requirements|linebreaks }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información de la Empresa -->
+            <div class="card mt-4 fade-in-up">
+                <div class="card-header bg-info text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-building me-2"></i>Sobre la Empresa
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h5 class="fw-bold">{{ offer.company.name }}</h5>
+                            <p class="text-muted mb-3">{{ offer.company.description|default:"Empresa comprometida con la excelencia y el desarrollo profesional." }}</p>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <p class="mb-1">
+                                        <i class="fas fa-map-marker-alt me-2 text-success"></i>
+                                        <strong>Ubicación:</strong> {{ offer.company.location }}
+                                    </p>
+                                </div>
+                                {% if offer.company.website %}
+                                <div class="col-sm-6">
+                                    <p class="mb-1">
+                                        <i class="fas fa-globe me-2 text-primary"></i>
+                                        <strong>Sitio Web:</strong> 
+                                        <a href="{{ offer.company.website }}" target="_blank" class="text-decoration-none">
+                                            Visitar sitio
+                                        </a>
+                                    </p>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="bg-light rounded p-4">
+                                <i class="fas fa-building fa-3x text-muted mb-3"></i>
+                                <p class="small text-muted mb-0">Empresa verificada</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel Lateral -->
+        <div class="col-lg-4">
+            <!-- Acciones -->
+            <div class="card fade-in-up mb-4">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0">
+                        <i class="fas fa-rocket me-2"></i>Acciones
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% if user.is_authenticated %}
+                        {% if user.candidate %}
+                            {% if has_applied %}
+                            <div class="alert alert-success text-center">
+                                <i class="fas fa-check-circle me-2"></i>
+                                <strong>Ya te has postulado</strong>
+                                <p class="small mb-0 mt-1">Revisa el estado en tus postulaciones</p>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <a href="{% url 'my_applications' %}" class="btn btn-outline-primary">
+                                    <i class="fas fa-list me-2"></i>Ver Mis Postulaciones
+                                </a>
+                            </div>
+                            {% elif not offer.is_expired %}
+                            <div class="d-grid gap-2">
+                                <a href="{% url 'apply_to_offer' offer.pk %}" class="btn btn-success btn-lg">
+                                    <i class="fas fa-paper-plane me-2"></i>Postularme Ahora
+                                </a>
+                            </div>
+                            {% else %}
+                            <div class="alert alert-warning text-center">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <strong>Oferta Expirada</strong>
+                                <p class="small mb-0 mt-1">Esta oferta ya no acepta postulaciones</p>
+                            </div>
+                            {% endif %}
+                        {% elif user.company %}
+                            {% if user.company == offer.company %}
+                            <div class="d-grid gap-2">
+                                <a href="{% url 'edit_job_offer' offer.pk %}" class="btn btn-warning">
+                                    <i class="fas fa-edit me-2"></i>Editar Oferta
+                                </a>
+                                <a href="{% url 'application_list' offer.pk %}" class="btn btn-info">
+                                    <i class="fas fa-users me-2"></i>Ver Postulaciones
+                                </a>
+                                <a href="{% url 'delete_job_offer' offer.pk %}" class="btn btn-outline-danger">
+                                    <i class="fas fa-trash me-2"></i>Eliminar Oferta
+                                </a>
+                            </div>
+                            {% else %}
+                            <div class="alert alert-info text-center">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <p class="mb-0">Esta oferta pertenece a otra empresa</p>
+                            </div>
+                            {% endif %}
+                        {% endif %}
+                    {% else %}
+                    <div class="text-center">
+                        <p class="text-muted mb-3">Para postularte necesitas una cuenta</p>
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary">
+                                <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
+                            </a>
+                            <a href="{% url 'register' %}" class="btn btn-outline-primary">
+                                <i class="fas fa-user-plus me-2"></i>Crear Cuenta
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Información Rápida -->
+            <div class="card fade-in-up mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Información Rápida
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6 class="fw-bold text-primary mb-2">
+                            <i class="fas fa-calendar me-2"></i>Fecha Límite
+                        </h6>
+                        <p class="mb-0 {% if offer.is_expired %}text-danger{% else %}text-success{% endif %}">
+                            {{ offer.deadline }}
+                            {% if offer.is_expired %}
+                            <br><small class="text-muted">(Expirada)</small>
+                            {% else %}
+                            <br><small class="text-muted">({{ offer.deadline|timeuntil }} restantes)</small>
+                            {% endif %}
+                        </p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6 class="fw-bold text-success mb-2">
+                            <i class="fas fa-map-marker-alt me-2"></i>Ubicación
+                        </h6>
+                        <p class="mb-0">{{ offer.location }}</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6 class="fw-bold text-warning mb-2">
+                            <i class="fas fa-dollar-sign me-2"></i>Salario
+                        </h6>
+                        <p class="mb-0">
+                            {% if offer.salary %}
+                            ${{ offer.salary }}
+                            {% else %}
+                            <span class="text-muted">A convenir</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6 class="fw-bold text-info mb-2">
+                            <i class="fas fa-clock me-2"></i>Publicación
+                        </h6>
+                        <p class="mb-0">{{ offer.publication_date|date:"d/m/Y" }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Compartir Oferta -->
+            <div class="card fade-in-up">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-share-alt me-2"></i>Compartir
+                    </h4>
+                </div>
+                <div class="card-body text-center">
+                    <div class="btn-group w-100" role="group">
+                        <button type="button" class="btn btn-outline-primary">
+                            <i class="fab fa-linkedin"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-info">
+                            <i class="fab fa-twitter"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-success">
+                            <i class="fab fa-whatsapp"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-dark" onclick="copyToClipboard()">
+                            <i class="fas fa-link"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .prose {
+        line-height: 1.7;
+        color: #374151;
+    }
+    
+    .prose p {
+        margin-bottom: 1rem;
+    }
+    
+    .prose ul, .prose ol {
+        margin-bottom: 1rem;
+        padding-left: 1.5rem;
+    }
+    
+    .prose li {
+        margin-bottom: 0.5rem;
+    }
+    
+    .breadcrumb {
+        background: transparent;
+        padding: 0;
+        margin-bottom: 1rem;
+    }
+    
+    .breadcrumb-item a {
+        color: #3498db;
+    }
+</style>
+
+<script>
+    function copyToClipboard() {
+        const url = window.location.href;
+        navigator.clipboard.writeText(url).then(() => {
+            // Mostrar notificación de éxito
+            const notification = document.createElement('div');
+            notification.className = 'alert alert-success alert-dismissible fade show position-fixed';
+            notification.style.cssText = 'top: 100px; right: 20px; z-index: 1060; min-width: 250px;';
+            notification.innerHTML = `
+                <i class="fas fa-check-circle me-2"></i>Enlace copiado al portapapeles
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 3000);
+        });
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // Efectos de animación para las tarjetas
+        const cards = document.querySelectorAll('.card');
+        cards.forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+        });
+        
+        // Contador de tiempo restante
+        const deadlineElement = document.querySelector('.text-success .text-muted');
+        if (deadlineElement) {
+            const deadlineText = deadlineElement.textContent;
+            if (deadlineText.includes('restantes')) {
+                // Actualizar cada minuto
+                setInterval(() => {
+                    // Recargar la página para actualizar el tiempo restante
+                    // En una implementación real, esto se haría con JavaScript
+                }, 60000);
+            }
+        }
+        
+        // Smooth scroll para anclas internas
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

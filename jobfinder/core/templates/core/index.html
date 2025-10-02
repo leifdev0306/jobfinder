@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+
+{% block title %}Inicio - Encuentra tu Trabajo Ideal{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card glass-card fade-in-up">
+                <div class="card-body text-center py-5">
+                    <h1 class="display-4 fw-bold mb-4" style="background: linear-gradient(45deg, #3498db, #e74c3c); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                        Bienvenido a JobFinder
+                    </h1>
+                    <p class="lead mb-4 fs-5">Conectamos el mejor talento con las mejores oportunidades laborales</p>
+                    <div class="d-flex justify-content-center gap-3 flex-wrap">
+                        <a class="btn btn-primary btn-lg px-4 py-2" href="{% url 'job_offers' %}">
+                            <i class="fas fa-search me-2"></i>Explorar Ofertas
+                        </a>
+                        {% if user.is_authenticated and user.company %}
+                        <a class="btn btn-success btn-lg px-4 py-2" href="{% url 'create_job_offer' %}">
+                            <i class="fas fa-plus me-2"></i>Publicar Oferta
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estadísticas Rápidas -->
+    <div class="row mb-5">
+        <div class="col-md-3 col-6 mb-4">
+            <div class="card card-primary text-center h-100 fade-in-up">
+                <div class="card-body">
+                    <i class="fas fa-briefcase fa-3x mb-3 text-primary"></i>
+                    <h3 class="card-title">{{ recent_offers.count }}</h3>
+                    <p class="card-text">Ofertas Activas</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 mb-4">
+            <div class="card card-success text-center h-100 fade-in-up">
+                <div class="card-body">
+                    <i class="fas fa-building fa-3x mb-3 text-success"></i>
+                    <h3 class="card-title">{{ offers_by_category|length }}</h3>
+                    <p class="card-text">Categorías</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 mb-4">
+            <div class="card card-warning text-center h-100 fade-in-up">
+                <div class="card-body">
+                    <i class="fas fa-users fa-3x mb-3 text-warning"></i>
+                    <h3 class="card-title">+500</h3>
+                    <p class="card-text">Candidatos</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 mb-4">
+            <div class="card card-danger text-center h-100 fade-in-up">
+                <div class="card-body">
+                    <i class="fas fa-chart-line fa-3x mb-3 text-danger"></i>
+                    <h3 class="card-title">98%</h3>
+                    <p class="card-text">Tasa de Éxito</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Ofertas Recientes -->
+        <div class="col-lg-8 mb-4">
+            <div class="card fade-in-up">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-bolt me-2"></i>Ofertas Recientes
+                    </h3>
+                </div>
+                <div class="card-body">
+                    {% for offer in recent_offers %}
+                    <div class="card mb-3 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <h5 class="card-title mb-1">{{ offer.title }}</h5>
+                                    <p class="card-text text-muted mb-1">
+                                        <i class="fas fa-building me-1"></i>{{ offer.company.name }}
+                                        <i class="fas fa-map-marker-alt ms-3 me-1"></i>{{ offer.location }}
+                                    </p>
+                                    <span class="badge bg-primary">{{ offer.category }}</span>
+                                    {% if offer.salary %}
+                                    <span class="badge bg-success ms-2">
+                                        <i class="fas fa-dollar-sign me-1"></i>{{ offer.salary }}
+                                    </span>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <a href="{% url 'job_offer_detail' offer.pk %}" class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-eye me-1"></i>Ver Detalles
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No hay ofertas disponibles en este momento.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Categorías y Acciones -->
+        <div class="col-lg-4">
+            <!-- Categorías -->
+            <div class="card mb-4 fade-in-up">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-tags me-2"></i>Categorías
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% for category in offers_by_category %}
+                    <div class="d-flex justify-content-between align-items-center p-2 border-bottom">
+                        <span class="fw-medium">{{ category.category }}</span>
+                        <span class="badge bg-primary rounded-pill">{{ category.count }}</span>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted text-center">No hay categorías disponibles.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Acciones Rápidas -->
+            <div class="card fade-in-up">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0">
+                        <i class="fas fa-rocket me-2"></i>Acciones Rápidas
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'job_offers' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-search me-2"></i>Buscar Ofertas
+                        </a>
+                        {% if not user.is_authenticated %}
+                        <a href="{% url 'register' %}" class="btn btn-outline-success">
+                            <i class="fas fa-user-plus me-2"></i>Crear Cuenta
+                        </a>
+                        <a href="{% url 'login' %}" class="btn btn-outline-info">
+                            <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
+                        </a>
+                        {% endif %}
+                        {% if user.is_authenticated and user.company %}
+                        <a href="{% url 'create_job_offer' %}" class="btn btn-outline-warning">
+                            <i class="fas fa-plus me-2"></i>Publicar Oferta
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .display-4 {
+        font-weight: 800;
+        letter-spacing: -1px;
+    }
+    
+    .card.glass-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+    }
+    
+    .card-header {
+        border-radius: var(--border-radius) var(--border-radius) 0 0 !important;
+    }
+</style>
+{% endblock %}

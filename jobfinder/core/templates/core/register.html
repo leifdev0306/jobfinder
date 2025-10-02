@@ -1,0 +1,436 @@
+{% extends 'base.html' %}
+
+{% block title %}Registro - Únete a JobFinder{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-xl-8 col-lg-10">
+            <!-- Header del Registro -->
+            <div class="card glass-card mb-5 fade-in-up">
+                <div class="card-body text-center py-4">
+                    <h1 class="display-5 fw-bold mb-3">
+                        <i class="fas fa-user-plus me-3 text-primary"></i>Únete a JobFinder
+                    </h1>
+                    <p class="lead mb-0">Crea tu cuenta y descubre nuevas oportunidades profesionales</p>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Formulario de Registro -->
+                <div class="col-lg-8">
+                    <div class="card fade-in-up">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="mb-0">
+                                <i class="fas fa-id-card me-2"></i>Información de Registro
+                            </h3>
+                        </div>
+                        <div class="card-body p-4">
+                            <form method="post" novalidate>
+                                {% csrf_token %}
+                                
+                                <!-- Información de Usuario -->
+                                <div class="mb-4">
+                                    <h5 class="fw-bold text-primary mb-3">
+                                        <i class="fas fa-user me-2"></i>Información Personal
+                                    </h5>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="id_username" class="form-label fw-semibold">Nombre de Usuario</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-primary text-white">
+                                                    <i class="fas fa-at"></i>
+                                                </span>
+                                                <input type="text" name="username" id="id_username" 
+                                                       class="form-control {% if user_form.username.errors %}is-invalid{% endif %}" 
+                                                       value="{{ user_form.username.value|default:'' }}"
+                                                       placeholder="juan_perez" required>
+                                            </div>
+                                            {% if user_form.username.errors %}
+                                                <div class="invalid-feedback d-block">
+                                                    {% for error in user_form.username.errors %}
+                                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="id_email" class="form-label fw-semibold">Correo Electrónico</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-success text-white">
+                                                    <i class="fas fa-envelope"></i>
+                                                </span>
+                                                <input type="email" name="email" id="id_email" 
+                                                       class="form-control {% if user_form.email.errors %}is-invalid{% endif %}" 
+                                                       value="{{ user_form.email.value|default:'' }}"
+                                                       placeholder="tu@email.com" required>
+                                            </div>
+                                            {% if user_form.email.errors %}
+                                                <div class="invalid-feedback d-block">
+                                                    {% for error in user_form.email.errors %}
+                                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="id_password1" class="form-label fw-semibold">Contraseña</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-warning text-dark">
+                                                    <i class="fas fa-lock"></i>
+                                                </span>
+                                                <input type="password" name="password1" id="id_password1" 
+                                                       class="form-control {% if user_form.password1.errors %}is-invalid{% endif %}" 
+                                                       placeholder="••••••••" required>
+                                                <button type="button" class="btn btn-outline-secondary toggle-password">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                            </div>
+                                            {% if user_form.password1.errors %}
+                                                <div class="invalid-feedback d-block">
+                                                    {% for error in user_form.password1.errors %}
+                                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="id_password2" class="form-label fw-semibold">Confirmar Contraseña</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-info text-white">
+                                                    <i class="fas fa-lock"></i>
+                                                </span>
+                                                <input type="password" name="password2" id="id_password2" 
+                                                       class="form-control {% if user_form.password2.errors %}is-invalid{% endif %}" 
+                                                       placeholder="••••••••" required>
+                                                <button type="button" class="btn btn-outline-secondary toggle-password">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                            </div>
+                                            {% if user_form.password2.errors %}
+                                                <div class="invalid-feedback d-block">
+                                                    {% for error in user_form.password2.errors %}
+                                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Tipo de Usuario -->
+                                <div class="mb-4">
+                                    <h5 class="fw-bold text-primary mb-3">
+                                        <i class="fas fa-users me-2"></i>Tipo de Cuenta
+                                    </h5>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-check card-option">
+                                                <input class="form-check-input" type="radio" name="user_type" 
+                                                       id="candidate_type" value="candidate" checked>
+                                                <label class="form-check-label w-100" for="candidate_type">
+                                                    <div class="card card-primary h-100 text-center">
+                                                        <div class="card-body">
+                                                            <i class="fas fa-user-graduate fa-3x text-primary mb-3"></i>
+                                                            <h6 class="fw-bold">Candidato</h6>
+                                                            <p class="small text-muted mb-0">Busco oportunidades laborales</p>
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-check card-option">
+                                                <input class="form-check-input" type="radio" name="user_type" 
+                                                       id="company_type" value="company">
+                                                <label class="form-check-label w-100" for="company_type">
+                                                    <div class="card card-success h-100 text-center">
+                                                        <div class="card-body">
+                                                            <i class="fas fa-building fa-3x text-success mb-3"></i>
+                                                            <h6 class="fw-bold">Empresa</h6>
+                                                            <p class="small text-muted mb-0">Busco talento para mi equipo</p>
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Información Adicional (se mostrará según el tipo) -->
+                                <div id="candidate-info" class="additional-info">
+                                    <h5 class="fw-bold text-primary mb-3">
+                                        <i class="fas fa-graduation-cap me-2"></i>Información del Candidato
+                                    </h5>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="candidate_phone" class="form-label fw-semibold">Teléfono</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-primary text-white">
+                                                    <i class="fas fa-phone"></i>
+                                                </span>
+                                                <input type="tel" name="candidate_phone" id="candidate_phone" 
+                                                       class="form-control" placeholder="+34 123 456 789">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="candidate_location" class="form-label fw-semibold">Ubicación</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-success text-white">
+                                                    <i class="fas fa-map-marker-alt"></i>
+                                                </span>
+                                                <input type="text" name="candidate_location" id="candidate_location" 
+                                                       class="form-control" placeholder="Ciudad, País">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="candidate_skills" class="form-label fw-semibold">Habilidades</label>
+                                        <textarea name="candidate_skills" id="candidate_skills" 
+                                                  class="form-control" rows="3" 
+                                                  placeholder="Python, Django, JavaScript, React..."></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="candidate_experience" class="form-label fw-semibold">Experiencia</label>
+                                        <textarea name="candidate_experience" id="candidate_experience" 
+                                                  class="form-control" rows="3" 
+                                                  placeholder="Describe tu experiencia profesional..."></textarea>
+                                    </div>
+                                </div>
+
+                                <div id="company-info" class="additional-info" style="display: none;">
+                                    <h5 class="fw-bold text-primary mb-3">
+                                        <i class="fas fa-briefcase me-2"></i>Información de la Empresa
+                                    </h5>
+                                    <div class="mb-3">
+                                        <label for="company_name" class="form-label fw-semibold">Nombre de la Empresa</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-primary text-white">
+                                                <i class="fas fa-building"></i>
+                                            </span>
+                                            <input type="text" name="company_name" id="company_name" 
+                                                   class="form-control" placeholder="Nombre de tu empresa">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="company_description" class="form-label fw-semibold">Descripción</label>
+                                        <textarea name="company_description" id="company_description" 
+                                                  class="form-control" rows="3" 
+                                                  placeholder="Describe tu empresa..."></textarea>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="company_location" class="form-label fw-semibold">Ubicación</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-success text-white">
+                                                    <i class="fas fa-map-marker-alt"></i>
+                                                </span>
+                                                <input type="text" name="company_location" id="company_location" 
+                                                       class="form-control" placeholder="Ciudad, País">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="company_phone" class="form-label fw-semibold">Teléfono</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-warning text-dark">
+                                                    <i class="fas fa-phone"></i>
+                                                </span>
+                                                <input type="tel" name="company_phone" id="company_phone" 
+                                                       class="form-control" placeholder="+34 123 456 789">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="company_website" class="form-label fw-semibold">Sitio Web (Opcional)</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-info text-white">
+                                                <i class="fas fa-globe"></i>
+                                            </span>
+                                            <input type="url" name="company_website" id="company_website" 
+                                                   class="form-control" placeholder="https://tuempresa.com">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Términos y Condiciones -->
+                                <div class="mb-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="terms" required>
+                                        <label class="form-check-label" for="terms">
+                                            Acepto los <a href="#" class="text-primary">Términos y Condiciones</a> 
+                                            y la <a href="#" class="text-primary">Política de Privacidad</a>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Botón de Registro -->
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary btn-lg">
+                                        <i class="fas fa-user-plus me-2"></i>Crear Cuenta
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información Lateral -->
+                <div class="col-lg-4 mt-4 mt-lg-0">
+                    <div class="card fade-in-up">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-star me-2"></i>Beneficios
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex mb-3">
+                                <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                                <div>
+                                    <h6 class="fw-bold">Para Candidatos</h6>
+                                    <p class="small text-muted mb-0">Encuentra trabajos que se ajusten a tu perfil</p>
+                                </div>
+                            </div>
+                            <div class="d-flex mb-3">
+                                <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                                <div>
+                                    <h6 class="fw-bold">Para Empresas</h6>
+                                    <p class="small text-muted mb-0">Encuentra el talento que necesitas</p>
+                                </div>
+                            </div>
+                            <div class="d-flex mb-3">
+                                <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                                <div>
+                                    <h6 class="fw-bold">Proceso Simple</h6>
+                                    <p class="small text-muted mb-0">Registro rápido y fácil de usar</p>
+                                </div>
+                            </div>
+                            <div class="d-flex">
+                                <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                                <div>
+                                    <h6 class="fw-bold">Completamente Gratuito</h6>
+                                    <p class="small text-muted mb-0">Sin costes ocultos ni suscripciones</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mt-4 fade-in-up">
+                        <div class="card-body text-center">
+                            <p class="mb-3">¿Ya tienes una cuenta?</p>
+                            <a href="{% url 'login' %}" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card-option .card {
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+    
+    .card-option .form-check-input {
+        display: none;
+    }
+    
+    .card-option .form-check-input:checked + .form-check-label .card {
+        border-color: #3498db;
+        box-shadow: 0 8px 25px rgba(52, 152, 219, 0.3);
+        transform: translateY(-5px);
+    }
+    
+    .additional-info {
+        transition: all 0.3s ease;
+    }
+    
+    .toggle-password {
+        border-radius: 0 0.375rem 0.375rem 0;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Mostrar/ocultar información adicional según el tipo de usuario
+        const candidateRadio = document.getElementById('candidate_type');
+        const companyRadio = document.getElementById('company_type');
+        const candidateInfo = document.getElementById('candidate-info');
+        const companyInfo = document.getElementById('company-info');
+        
+        function toggleUserInfo() {
+            if (candidateRadio.checked) {
+                candidateInfo.style.display = 'block';
+                companyInfo.style.display = 'none';
+            } else {
+                candidateInfo.style.display = 'none';
+                companyInfo.style.display = 'block';
+            }
+        }
+        
+        candidateRadio.addEventListener('change', toggleUserInfo);
+        companyRadio.addEventListener('change', toggleUserInfo);
+        
+        // Toggle para mostrar/ocultar contraseña
+        document.querySelectorAll('.toggle-password').forEach(button => {
+            button.addEventListener('click', function() {
+                const input = this.closest('.input-group').querySelector('input');
+                const icon = this.querySelector('i');
+                
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    input.type = 'password';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            });
+        });
+        
+        // Validación en tiempo real
+        const password1 = document.getElementById('id_password1');
+        const password2 = document.getElementById('id_password2');
+        
+        function validatePasswords() {
+            if (password1.value && password2.value) {
+                if (password1.value !== password2.value) {
+                    password2.classList.add('is-invalid');
+                    password2.classList.remove('is-valid');
+                } else {
+                    password2.classList.remove('is-invalid');
+                    password2.classList.add('is-valid');
+                }
+            }
+        }
+        
+        password1.addEventListener('input', validatePasswords);
+        password2.addEventListener('input', validatePasswords);
+        
+        // Efectos visuales en las opciones de tipo de usuario
+        document.querySelectorAll('.card-option .card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                if (!this.closest('.form-check-input').checked) {
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.1)';
+                }
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                if (!this.closest('.form-check-input').checked) {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = 'var(--shadow-soft)';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

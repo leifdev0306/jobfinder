@@ -1,0 +1,28 @@
+    {% extends 'core/base.html' %}
+
+{% block title %}Ofertas que Expiran Pronto{% endblock %}
+
+{% block content %}
+<h1>Ofertas que Expiran en la Próxima Semana</h1>
+
+<div class="row">
+    {% for offer in expiring_offers %}
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ offer.title }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ offer.company.name }} - {{ offer.location }}</h6>
+                    <p class="card-text">{{ offer.description|truncatewords:30 }}</p>
+                    <span class="badge bg-primary">{{ offer.category }}</span>
+                    <p class="card-text"><small class="text-muted">Expira: {{ offer.deadline|date:"d/m/Y" }}</small></p>
+                    <a href="{% url 'job_offer_detail' offer.pk %}" class="btn btn-primary">Ver Detalles</a>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">No hay ofertas que expiren en la próxima semana.</div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

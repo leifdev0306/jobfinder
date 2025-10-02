@@ -1,0 +1,324 @@
+{% extends 'base.html' %}
+
+{% block title %}Postularme - {{ offer.title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-xl-8 col-lg-10">
+            <!-- Header -->
+            <div class="card glass-card mb-4 fade-in-up">
+                <div class="card-body">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-decoration-none">Inicio</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'job_offers' %}" class="text-decoration-none">Ofertas</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'job_offer_detail' offer.pk %}" class="text-decoration-none">{{ offer.title|truncatewords:3 }}</a></li>
+                            <li class="breadcrumb-item active">Postularme</li>
+                        </ol>
+                    </nav>
+                    
+                    <div class="text-center">
+                        <h1 class="h2 mb-3">
+                            <i class="fas fa-paper-plane me-2 text-success"></i>Postularme a la Oferta
+                        </h1>
+                        <p class="lead mb-0">{{ offer.title }} - {{ offer.company.name }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Formulario de Postulación -->
+                <div class="col-lg-8">
+                    <div class="card fade-in-up">
+                        <div class="card-header bg-success text-white">
+                            <h3 class="mb-0">
+                                <i class="fas fa-edit me-2"></i>Información de Postulación
+                            </h3>
+                        </div>
+                        <div class="card-body p-4">
+                            <form method="post" novalidate>
+                                {% csrf_token %}
+                                
+                                <!-- Carta de Presentación -->
+                                <div class="mb-4">
+                                    <label for="{{ form.cover_letter.id_for_label }}" class="form-label fw-bold fs-5">
+                                        <i class="fas fa-envelope-open-text me-2 text-primary"></i>Carta de Presentación
+                                    </label>
+                                    <textarea name="{{ form.cover_letter.name }}" 
+                                              id="{{ form.cover_letter.id_for_label }}" 
+                                              class="form-control {% if form.cover_letter.errors %}is-invalid{% endif %}" 
+                                              rows="8"
+                                              placeholder="Explica por qué eres el candidato ideal para esta posición. Incluye tu experiencia, habilidades y por qué te interesa esta oportunidad..."
+                                              required>{{ form.cover_letter.value|default:'' }}</textarea>
+                                    {% if form.cover_letter.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.cover_letter.errors %}
+                                                <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    <div class="form-text text-muted">
+                                        <i class="fas fa-lightbulb me-1"></i>
+                                        Sé específico y muestra tu entusiasmo. Esta es tu oportunidad de destacar.
+                                    </div>
+                                </div>
+
+                                <!-- Consejos para la Carta -->
+                                <div class="alert alert-info">
+                                    <h6 class="fw-bold mb-3">
+                                        <i class="fas fa-tips me-2"></i>Consejos para una buena carta de presentación:
+                                    </h6>
+                                    <ul class="mb-0 small">
+                                        <li><strong>Personalízala:</strong> Menciona específicamente por qué te interesa esta empresa y puesto</li>
+                                        <li><strong>Sé conciso:</strong> Ve al gran punto pero incluye detalles relevantes</li>
+                                        <li><strong>Destaca logros:</strong> Menciona resultados específicos que hayas obtenido</li>
+                                        <li><strong>Muestra entusiasmo:</strong> Transmite tu interés genuino por la posición</li>
+                                        <li><strong>Revisa la ortografía:</strong> Un documento sin errores demuestra profesionalismo</li>
+                                    </ul>
+                                </div>
+
+                                <!-- Botones de Acción -->
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                                    <a href="{% url 'job_offer_detail' offer.pk %}" class="btn btn-outline-secondary btn-lg me-md-3">
+                                        <i class="fas fa-arrow-left me-2"></i>Cancelar
+                                    </a>
+                                    <button type="submit" class="btn btn-success btn-lg px-5">
+                                        <i class="fas fa-paper-plane me-2"></i>Enviar Postulación
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información de la Oferta -->
+                <div class="col-lg-4 mt-4 mt-lg-0">
+                    <div class="card fade-in-up">
+                        <div class="card-header bg-primary text-white">
+                            <h4 class="mb-0">
+                                <i class="fas fa-info-circle me-2"></i>Detalles de la Oferta
+                            </h4>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="mb-3">{{ offer.title }}</h5>
+                            <div class="mb-3">
+                                <p class="mb-1">
+                                    <i class="fas fa-building me-2 text-primary"></i>
+                                    <strong>Empresa:</strong> {{ offer.company.name }}
+                                </p>
+                                <p class="mb-1">
+                                    <i class="fas fa-map-marker-alt me-2 text-success"></i>
+                                    <strong>Ubicación:</strong> {{ offer.location }}
+                                </p>
+                                <p class="mb-1">
+                                    <i class="fas fa-tags me-2 text-warning"></i>
+                                    <strong>Categoría:</strong> {{ offer.category }}
+                                </p>
+                                {% if offer.salary %}
+                                <p class="mb-1">
+                                    <i class="fas fa-dollar-sign me-2 text-info"></i>
+                                    <strong>Salario:</strong> ${{ offer.salary }}
+                                </p>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="alert alert-warning small">
+                                <i class="fas fa-clock me-2"></i>
+                                <strong>Fecha límite:</strong> {{ offer.deadline }}
+                                <br><small>{{ offer.deadline|timeuntil }} restantes</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Perfil del Candidato -->
+                    <div class="card mt-4 fade-in-up">
+                        <div class="card-header bg-info text-white">
+                            <h4 class="mb-0">
+                                <i class="fas fa-user me-2"></i>Tu Perfil
+                            </h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center mb-3">
+                                <i class="fas fa-user-circle fa-3x text-muted mb-3"></i>
+                                <h6>{{ user.get_full_name|default:user.username }}</h6>
+                                <p class="small text-muted">{{ user.email }}</p>
+                            </div>
+                            
+                            {% if user.candidate %}
+                            <div class="small">
+                                <p class="mb-1">
+                                    <strong>Ubicación:</strong> {{ user.candidate.location|default:"No especificada" }}
+                                </p>
+                                <p class="mb-1">
+                                    <strong>Habilidades:</strong> 
+                                    {{ user.candidate.skills|truncatewords:10|default:"No especificadas" }}
+                                </p>
+                                <p class="mb-0">
+                                    <strong>Experiencia:</strong> 
+                                    {{ user.candidate.experience|truncatewords:15|default:"No especificada" }}
+                                </p>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="mt-3">
+                                <a href="#" class="btn btn-outline-primary btn-sm w-100">
+                                    <i class="fas fa-edit me-2"></i>Actualizar Perfil
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Proceso de Selección -->
+                    <div class="card mt-4 fade-in-up">
+                        <div class="card-header bg-secondary text-white">
+                            <h4 class="mb-0">
+                                <i class="fas fa-list-ol me-2"></i>Proceso de Selección
+                            </h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex mb-3">
+                                <div class="flex-shrink-0">
+                                    <span class="badge bg-primary rounded-circle p-2">1</span>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="mb-1">Postulación</h6>
+                                    <p class="small text-muted mb-0">Envías tu candidatura</p>
+                                </div>
+                            </div>
+                            <div class="d-flex mb-3">
+                                <div class="flex-shrink-0">
+                                    <span class="badge bg-secondary rounded-circle p-2">2</span>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="mb-1">Revisión</h6>
+                                    <p class="small text-muted mb-0">La empresa revisa tu perfil</p>
+                                </div>
+                            </div>
+                            <div class="d-flex mb-3">
+                                <div class="flex-shrink-0">
+                                    <span class="badge bg-secondary rounded-circle p-2">3</span>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="mb-1">Entrevista</h6>
+                                    <p class="small text-muted mb-0">Posible contacto para entrevista</p>
+                                </div>
+                            </div>
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <span class="badge bg-secondary rounded-circle p-2">4</span>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="mb-1">Decisión</h6>
+                                    <p class="small text-muted mb-0">Resultado final del proceso</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    textarea.form-control {
+        resize: vertical;
+        min-height: 200px;
+    }
+    
+    .breadcrumb {
+        background: transparent;
+        padding: 0;
+        margin-bottom: 1rem;
+    }
+    
+    .card.glass-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Contador de caracteres para la carta de presentación
+        const textarea = document.getElementById('{{ form.cover_letter.id_for_label }}');
+        const charCount = document.createElement('div');
+        charCount.className = 'form-text text-end';
+        charCount.innerHTML = '<span id="charCount">0</span> caracteres escritos';
+        
+        textarea.parentNode.appendChild(charCount);
+        
+        textarea.addEventListener('input', function() {
+            const count = this.value.length;
+            document.getElementById('charCount').textContent = count;
+            
+            // Cambiar color según la longitud
+            if (count < 100) {
+                charCount.style.color = '#dc3545';
+            } else if (count < 200) {
+                charCount.style.color = '#ffc107';
+            } else {
+                charCount.style.color = '#28a745';
+            }
+        });
+        
+        // Trigger initial count
+        textarea.dispatchEvent(new Event('input'));
+        
+        // Validación de longitud mínima
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function(e) {
+            const coverLetter = textarea.value.trim();
+            
+            if (coverLetter.length < 50) {
+                e.preventDefault();
+                showNotification('La carta de presentación debe tener al menos 50 caracteres.', 'warning');
+                textarea.focus();
+            }
+        });
+        
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            notification.style.cssText = 'top: 100px; right: 20px; z-index: 1060; min-width: 300px;';
+            notification.innerHTML = `
+                <i class="fas fa-exclamation-circle me-2"></i>${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 5000);
+        }
+        
+        // Auto-guardado local (simulado)
+        // CORRECCIÓN: Removí la sintaxis incorrecta de Django dentro de JavaScript
+        const saveKey = 'draft_{{ offer.pk }}'; // Simple y funciona
+        const savedDraft = localStorage.getItem(saveKey);
+        
+        if (savedDraft && !textarea.value) {
+            if (confirm('Tienes un borrador guardado para esta postulación. ¿Deseas recuperarlo?')) {
+                textarea.value = savedDraft;
+                textarea.dispatchEvent(new Event('input'));
+            }
+        }
+        
+        // Guardar borrado automáticamente cada 10 segundos
+        setInterval(() => {
+            if (textarea.value.trim()) {
+                localStorage.setItem(saveKey, textarea.value);
+            }
+        }, 10000);
+        
+        // Limpiar borrado al enviar el formulario
+        form.addEventListener('submit', function() {
+            localStorage.removeItem(saveKey);
+        });
+    });
+</script>
+{% endblock %}

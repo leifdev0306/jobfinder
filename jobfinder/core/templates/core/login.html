@@ -1,0 +1,218 @@
+{% extends 'base.html' %}
+
+{% block title %}Iniciar Sesión - JobFinder{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-xl-6 col-lg-8 col-md-10">
+            <!-- Header del Login -->
+            <div class="card glass-card mb-5 fade-in-up">
+                <div class="card-body text-center py-4">
+                    <h1 class="display-5 fw-bold mb-3">
+                        <i class="fas fa-sign-in-alt me-3 text-primary"></i>Bienvenido de Nuevo
+                    </h1>
+                    <p class="lead mb-0">Accede a tu cuenta para gestionar tus oportunidades</p>
+                </div>
+            </div>
+
+            <div class="card fade-in-up">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-lock me-2"></i>Iniciar Sesión
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- Campo Usuario/Email -->
+                        <div class="mb-4">
+                            <label for="username" class="form-label fw-semibold fs-5">
+                                <i class="fas fa-user me-2 text-primary"></i>Usuario o Correo Electrónico
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-primary text-white">
+                                    <i class="fas fa-at"></i>
+                                </span>
+                                <input type="text" name="username" id="username" 
+                                       class="form-control form-control-lg" 
+                                       placeholder="usuario@ejemplo.com" 
+                                       required
+                                       autofocus>
+                            </div>
+                        </div>
+
+                        <!-- Campo Contraseña -->
+                        <div class="mb-4">
+                            <label for="password" class="form-label fw-semibold fs-5">
+                                <i class="fas fa-key me-2 text-warning"></i>Contraseña
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-warning text-dark">
+                                    <i class="fas fa-lock"></i>
+                                </span>
+                                <input type="password" name="password" id="password" 
+                                       class="form-control form-control-lg" 
+                                       placeholder="••••••••" 
+                                       required>
+                                <button type="button" class="btn btn-outline-secondary toggle-password">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Recordarme y Olvidé Contraseña -->
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="remember">
+                                <label class="form-check-label" for="remember">
+                                    Recordar sesión
+                                </label>
+                            </div>
+                            <a href="#" class="text-primary text-decoration-none">
+                                <i class="fas fa-question-circle me-1"></i>¿Olvidaste tu contraseña?
+                            </a>
+                        </div>
+
+                        <!-- Botón de Login -->
+                        <div class="d-grid mb-4">
+                            <button type="submit" class="btn btn-primary btn-lg py-3">
+                                <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
+                            </button>
+                        </div>
+
+                        <!-- Separador -->
+                        <div class="text-center mb-4">
+                            <div class="position-relative">
+                                <hr>
+                                <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted">
+                                    o
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Registro -->
+                        <div class="text-center">
+                            <p class="mb-3">¿No tienes una cuenta?</p>
+                            <a href="{% url 'register' %}" class="btn btn-outline-primary btn-lg w-100">
+                                <i class="fas fa-user-plus me-2"></i>Crear Cuenta
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Información Adicional -->
+            <div class="card mt-4 fade-in-up">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>¿Primera vez aquí?
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-4 mb-3">
+                            <i class="fas fa-briefcase fa-2x text-primary mb-2"></i>
+                            <h6>Encuentra Trabajo</h6>
+                            <p class="small text-muted">Descubre oportunidades que se ajusten a tu perfil</p>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <i class="fas fa-building fa-2x text-success mb-2"></i>
+                            <h6>Contrata Talento</h6>
+                            <p class="small text-muted">Encuentra los mejores profesionales para tu equipo</p>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <i class="fas fa-rocket fa-2x text-warning mb-2"></i>
+                            <h6>Crece Profesionalmente</h6>
+                            <p class="small text-muted">Accede a herramientas para tu desarrollo profesional</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control-lg {
+        padding: 1rem 1.5rem;
+        font-size: 1.1rem;
+    }
+    
+    .toggle-password {
+        border-radius: 0 0.375rem 0.375rem 0;
+    }
+    
+    .card.glass-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Toggle para mostrar/ocultar contraseña
+        const toggleButton = document.querySelector('.toggle-password');
+        const passwordInput = document.getElementById('password');
+        
+        toggleButton.addEventListener('click', function() {
+            const icon = this.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+        
+        // Efecto de enfoque en los campos
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('focused');
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.classList.remove('focused');
+            });
+        });
+        
+        // Validación básica del formulario
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function(e) {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            
+            if (!username || !password) {
+                e.preventDefault();
+                showNotification('Por favor, completa todos los campos requeridos.', 'warning');
+            }
+        });
+        
+        function showNotification(message, type) {
+            // Crear notificación temporal
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            notification.style.cssText = 'top: 100px; right: 20px; z-index: 1060; min-width: 300px;';
+            notification.innerHTML = `
+                <i class="fas fa-exclamation-circle me-2"></i>${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto-eliminar después de 5 segundos
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 5000);
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,385 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if editing %}Editar Oferta - {{ offer.title }}{% else %}Publicar Nueva Oferta{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-xl-10">
+            <!-- Header del Formulario -->
+            <div class="card glass-card mb-4 fade-in-up">
+                <div class="card-body text-center py-4">
+                    <h1 class="display-5 fw-bold mb-3">
+                        {% if editing %}
+                        <i class="fas fa-edit me-3 text-warning"></i>Editar Oferta
+                        {% else %}
+                        <i class="fas fa-plus-circle me-3 text-success"></i>Publicar Nueva Oferta
+                        {% endif %}
+                    </h1>
+                    <p class="lead mb-0">
+                        {% if editing %}
+                        Actualiza los detalles de tu oferta de trabajo
+                        {% else %}
+                        Completa la información para publicar una nueva oferta
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Formulario Principal -->
+            <div class="card fade-in-up">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Información de la Oferta
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" novalidate class="needs-validation">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <!-- Columna Izquierda -->
+                            <div class="col-lg-6">
+                                <!-- Título -->
+                                <div class="mb-4">
+                                    <label for="{{ form.title.id_for_label }}" class="form-label fw-bold fs-5">
+                                        <i class="fas fa-heading me-2 text-primary"></i>Título de la Oferta
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-primary text-white">
+                                            <i class="fas fa-briefcase"></i>
+                                        </span>
+                                        <input type="text" 
+                                               name="{{ form.title.name }}" 
+                                               id="{{ form.title.id_for_label }}" 
+                                               class="form-control form-control-lg {% if form.title.errors %}is-invalid{% endif %}" 
+                                               value="{{ form.title.value|default:'' }}"
+                                               placeholder="Ej: Desarrollador Web Full Stack Senior"
+                                               required>
+                                    </div>
+                                    {% if form.title.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.title.errors %}
+                                                <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    <div class="form-text text-muted">
+                                        <i class="fas fa-lightbulb me-1"></i>Sé específico y atractivo en el título.
+                                    </div>
+                                </div>
+
+                                <!-- Categoría -->
+                                <div class="mb-4">
+                                    <label for="{{ form.category.id_for_label }}" class="form-label fw-bold fs-5">
+                                        <i class="fas fa-tags me-2 text-success"></i>Categoría
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-success text-white">
+                                            <i class="fas fa-filter"></i>
+                                        </span>
+                                        <select name="{{ form.category.name }}" 
+                                                id="{{ form.category.id_for_label }}" 
+                                                class="form-select form-select-lg {% if form.category.errors %}is-invalid{% endif %}" 
+                                                required>
+                                            <option value="">Selecciona una categoría</option>
+                                            {% for value, label in form.category.field.choices %}
+                                                <option value="{{ value }}" 
+                                                        {% if form.category.value == value %}selected{% endif %}>
+                                                    {{ label }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    {% if form.category.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.category.errors %}
+                                                <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Ubicación -->
+                                <div class="mb-4">
+                                    <label for="{{ form.location.id_for_label }}" class="form-label fw-bold fs-5">
+                                        <i class="fas fa-map-marker-alt me-2 text-danger"></i>Ubicación
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-danger text-white">
+                                            <i class="fas fa-globe"></i>
+                                        </span>
+                                        <input type="text" 
+                                               name="{{ form.location.name }}" 
+                                               id="{{ form.location.id_for_label }}" 
+                                               class="form-control form-control-lg {% if form.location.errors %}is-invalid{% endif %}" 
+                                               value="{{ form.location.value|default:'' }}"
+                                               placeholder="Ej: Madrid, España - Remoto"
+                                               required>
+                                    </div>
+                                    {% if form.location.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.location.errors %}
+                                                <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Salario -->
+                                <div class="mb-4">
+                                    <label for="{{ form.salary.id_for_label }}" class="form-label fw-bold fs-5">
+                                        <i class="fas fa-dollar-sign me-2 text-warning"></i>Salario (Opcional)
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-warning text-dark">
+                                            <i class="fas fa-money-bill-wave"></i>
+                                        </span>
+                                        <input type="number" 
+                                               name="{{ form.salary.name }}" 
+                                               id="{{ form.salary.id_for_label }}" 
+                                               class="form-control form-control-lg {% if form.salary.errors %}is-invalid{% endif %}" 
+                                               value="{{ form.salary.value|default:'' }}"
+                                               placeholder="35000"
+                                               step="0.01"
+                                               min="0">
+                                        <span class="input-group-text">€/año</span>
+                                    </div>
+                                    {% if form.salary.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.salary.errors %}
+                                                <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    <div class="form-text text-muted">
+                                        <i class="fas fa-info-circle me-1"></i>Puedes dejar vacío si el salario es a convenir.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Columna Derecha -->
+                            <div class="col-lg-6">
+                                <!-- Fecha Límite -->
+                                <div class="mb-4">
+                                    <label for="{{ form.deadline.id_for_label }}" class="form-label fw-bold fs-5">
+                                        <i class="fas fa-calendar-alt me-2 text-info"></i>Fecha Límite
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-info text-white">
+                                            <i class="fas fa-clock"></i>
+                                        </span>
+                                        <input type="date" 
+                                               name="{{ form.deadline.name }}" 
+                                               id="{{ form.deadline.id_for_label }}" 
+                                               class="form-control form-control-lg {% if form.deadline.errors %}is-invalid{% endif %}" 
+                                               value="{{ form.deadline.value|date:'Y-m-d' }}"
+                                               min="{% now 'Y-m-d' %}"
+                                               required>
+                                    </div>
+                                    {% if form.deadline.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.deadline.errors %}
+                                                <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    <div class="form-text text-muted">
+                                        <i class="fas fa-lightbulb me-1"></i>La oferta dejará de aceptar postulaciones después de esta fecha.
+                                    </div>
+                                </div>
+
+                                <!-- Descripción -->
+                                <div class="mb-4">
+                                    <label for="{{ form.description.id_for_label }}" class="form-label fw-bold fs-5">
+                                        <i class="fas fa-file-alt me-2 text-primary"></i>Descripción del Puesto
+                                    </label>
+                                    <textarea name="{{ form.description.name }}" 
+                                              id="{{ form.description.id_for_label }}" 
+                                              class="form-control {% if form.description.errors %}is-invalid{% endif %}" 
+                                              rows="5"
+                                              placeholder="Describe las responsabilidades, funciones y objetivos del puesto..."
+                                              required>{{ form.description.value|default:'' }}</textarea>
+                                    {% if form.description.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.description.errors %}
+                                                <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    <div class="form-text text-muted">
+                                        <i class="fas fa-lightbulb me-1"></i>Sé detallado pero conciso. Los candidatos valoran la claridad.
+                                    </div>
+                                </div>
+
+                                <!-- Requisitos -->
+                                <div class="mb-4">
+                                    <label for="{{ form.requirements.id_for_label }}" class="form-label fw-bold fs-5">
+                                        <i class="fas fa-list-check me-2 text-success"></i>Requisitos
+                                    </label>
+                                    <textarea name="{{ form.requirements.name }}" 
+                                              id="{{ form.requirements.id_for_label }}" 
+                                              class="form-control {% if form.requirements.errors %}is-invalid{% endif %}" 
+                                              rows="5"
+                                              placeholder="Lista los requisitos técnicos, experiencia necesaria y habilidades requeridas..."
+                                              required>{{ form.requirements.value|default:'' }}</textarea>
+                                    {% if form.requirements.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.requirements.errors %}
+                                                <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    <div class="form-text text-muted">
+                                        <i class="fas fa-lightbulb me-1"></i>Separa los requisitos con puntos o viñetas para mejor legibilidad.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Botones de Acción -->
+                        <div class="row mt-5">
+                            <div class="col-12">
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <a href="{% if editing %}{% url 'company_dashboard' %}{% else %}{% url 'job_offers' %}{% endif %}" 
+                                       class="btn btn-outline-secondary btn-lg me-md-3">
+                                        <i class="fas fa-arrow-left me-2"></i>Cancelar
+                                    </a>
+                                    <button type="submit" class="btn btn-primary btn-lg px-5">
+                                        {% if editing %}
+                                            <i class="fas fa-save me-2"></i>Guardar Cambios
+                                        {% else %}
+                                            <i class="fas fa-paper-plane me-2"></i>Publicar Oferta
+                                        {% endif %}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Consejos -->
+            {% if not editing %}
+            <div class="card mt-4 fade-in-up">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0">
+                        <i class="fas fa-lightbulb me-2"></i>Consejos para una Oferta Exitosa
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="d-flex mb-3">
+                                <i class="fas fa-check-circle text-success me-3 fs-5 mt-1"></i>
+                                <div>
+                                    <h6 class="fw-bold">Sé Específico</h6>
+                                    <p class="text-muted mb-0">Describe claramente las responsabilidades y expectativas del puesto.</p>
+                                </div>
+                            </div>
+                            <div class="d-flex mb-3">
+                                <i class="fas fa-check-circle text-success me-3 fs-5 mt-1"></i>
+                                <div>
+                                    <h6 class="fw-bold">Destaca Beneficios</h6>
+                                    <p class="text-muted mb-0">Incluye información sobre beneficios, crecimiento y cultura empresarial.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex mb-3">
+                                <i class="fas fa-check-circle text-success me-3 fs-5 mt-1"></i>
+                                <div>
+                                    <h6 class="fw-bold">Requisitos Realistas</h6>
+                                    <p class="text-muted mb-0">Establece requisitos alcanzables para atraer más candidatos calificados.</p>
+                                </div>
+                            </div>
+                            <div class="d-flex mb-3">
+                                <i class="fas fa-check-circle text-success me-3 fs-5 mt-1"></i>
+                                <div>
+                                    <h6 class="fw-bold">Fecha Límite Adecuada</h6>
+                                    <p class="text-muted mb-0">Da tiempo suficiente para que los candidatos puedan postularse.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Configurar fecha mínima
+        const deadlineField = document.getElementById('{{ form.deadline.id_for_label }}');
+        const today = new Date().toISOString().split('T')[0];
+        
+        if (deadlineField) {
+            deadlineField.min = today;
+            
+            // Establecer fecha por defecto (15 días desde hoy)
+            if (!deadlineField.value) {
+                const defaultDate = new Date();
+                defaultDate.setDate(defaultDate.getDate() + 15);
+                deadlineField.value = defaultDate.toISOString().split('T')[0];
+            }
+        }
+
+        // Validación en tiempo real
+        const form = document.querySelector('form');
+        const inputs = form.querySelectorAll('input[required], textarea[required], select[required]');
+        
+        inputs.forEach(input => {
+            input.addEventListener('blur', function() {
+                if (!this.value.trim()) {
+                    this.classList.add('is-invalid');
+                } else {
+                    this.classList.remove('is-invalid');
+                    this.classList.add('is-valid');
+                }
+            });
+            
+            input.addEventListener('input', function() {
+                if (this.value.trim()) {
+                    this.classList.remove('is-invalid');
+                    this.classList.add('is-valid');
+                }
+            });
+        });
+
+        // Efectos visuales mejorados
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    });
+</script>
+
+<style>
+    .form-control-lg {
+        padding: 1rem 1.5rem;
+        font-size: 1.1rem;
+    }
+    
+    .input-group-text {
+        border-radius: 10px 0 0 10px;
+    }
+    
+    .is-valid {
+        border-color: #28a745;
+        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+    }
+    
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+</style>
+{% endblock %}

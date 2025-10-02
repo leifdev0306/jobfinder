@@ -1,0 +1,375 @@
+{% extends 'base.html' %}
+
+{% block title %}Ofertas de Trabajo - Encuentra tu Próxima Oportunidad{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Header y Filtros -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card glass-card fade-in-up">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h1 class="h2 mb-2">
+                                <i class="fas fa-briefcase me-2 text-primary"></i>Ofertas de Trabajo
+                            </h1>
+                            <p class="lead mb-0">Encuentra la oportunidad perfecta para tu carrera profesional</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <span class="badge bg-primary fs-6">
+                                {{ offers.count }} ofertas disponibles
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card fade-in-up">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-filter me-2 text-primary"></i>Filtrar Ofertas
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <div class="col-md-6">
+                            <label for="search" class="form-label fw-semibold">Buscar</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-primary text-white">
+                                    <i class="fas fa-search"></i>
+                                </span>
+                                <input type="text" name="search" id="search" 
+                                       class="form-control" 
+                                       placeholder="Puesto, empresa o palabras clave..."
+                                       value="{{ request.GET.search }}">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="category" class="form-label fw-semibold">Categoría</label>
+                            <select name="category" id="category" class="form-select">
+                                <option value="">Todas las categorías</option>
+                                <option value="💻 Desarrollo de Software" {% if request.GET.category == "💻 Desarrollo de Software" %}selected{% endif %}>
+                                    💻 Desarrollo de Software
+                                </option>
+                                <option value="📊 Marketing Digital" {% if request.GET.category == "📊 Marketing Digital" %}selected{% endif %}>
+                                    📊 Marketing Digital
+                                </option>
+                                <option value="🎨 Diseño Gráfico" {% if request.GET.category == "🎨 Diseño Gráfico" %}selected{% endif %}>
+                                    🎨 Diseño Gráfico
+                                </option>
+                                <option value="✍️ Redacción de Contenidos" {% if request.GET.category == "✍️ Redacción de Contenidos" %}selected{% endif %}>
+                                    ✍️ Redacción de Contenidos
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-filter me-2"></i>Filtrar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Ofertas -->
+    <div class="row">
+        <div class="col-12">
+            {% if offers %}
+                <div class="row">
+                    {% for offer in offers %}
+                    <div class="col-xl-6 col-lg-12 mb-4">
+                        <div class="card offer-card h-100 fade-in-up">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <h4 class="card-title mb-2">
+                                            <a href="{% url 'job_offer_detail' offer.pk %}" class="text-decoration-none text-dark">
+                                                {{ offer.title }}
+                                            </a>
+                                        </h4>
+                                        <p class="card-text mb-2">
+                                            <i class="fas fa-building me-2 text-primary"></i>
+                                            <strong>{{ offer.company.name }}</strong>
+                                        </p>
+                                        <p class="card-text mb-2">
+                                            <i class="fas fa-map-marker-alt me-2 text-success"></i>
+                                            {{ offer.location }}
+                                        </p>
+                                        <div class="mb-3">
+                                            <span class="badge bg-primary me-2">{{ offer.category }}</span>
+                                            {% if offer.salary %}
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-dollar-sign me-1"></i>{{ offer.salary }}
+                                            </span>
+                                            {% endif %}
+                                        </div>
+                                        <p class="card-text text-muted small">
+                                            {{ offer.description|truncatewords:30 }}
+                                        </p>
+                                    </div>
+                                    <div class="col-md-4 text-end">
+                                        <div class="d-flex flex-column h-100">
+                                            <div class="mb-auto">
+                                                <small class="text-muted">
+                                                    <i class="fas fa-clock me-1"></i>
+                                                    Publicado {{ offer.publication_date|timesince }}
+                                                </small>
+                                                <br>
+                                                <small class="text-muted">
+                                                    <i class="fas fa-calendar me-1"></i>
+                                                    Vence {{ offer.deadline|timeuntil }}
+                                                </small>
+                                            </div>
+                                            <div class="mt-3">
+                                                <a href="{% url 'job_offer_detail' offer.pk %}" 
+                                                   class="btn btn-primary btn-sm w-100 mb-2">
+                                                    <i class="fas fa-eye me-1"></i>Ver Detalles
+                                                </a>
+                                                {% if user.is_authenticated and user.candidate %}
+                                                <a href="{% url 'apply_to_offer' offer.pk %}" 
+                                                   class="btn btn-success btn-sm w-100">
+                                                    <i class="fas fa-paper-plane me-1"></i>Postularme
+                                                </a>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-light">
+                                <div class="row align-items-center">
+                                    <div class="col-md-6">
+                                        <small class="text-muted">
+                                            <i class="fas fa-briefcase me-1"></i>
+                                            {{ offer.get_job_type_display }}
+                                        </small>
+                                    </div>
+                                    <div class="col-md-6 text-end">
+                                        {% if offer.is_expired %}
+                                        <span class="badge bg-danger">
+                                            <i class="fas fa-clock me-1"></i>Expirada
+                                        </span>
+                                        {% else %}
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-bolt me-1"></i>Activa
+                                        </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Paginación -->
+                {% if offers.has_other_pages %}
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <nav aria-label="Paginación de ofertas">
+                            <ul class="pagination justify-content-center">
+                                {% if offers.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ offers.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                                {% endif %}
+
+                                {% for num in offers.paginator.page_range %}
+                                    {% if offers.number == num %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ num }}</span>
+                                    </li>
+                                    {% else %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}">
+                                            {{ num }}
+                                        </a>
+                                    </li>
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% if offers.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ offers.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+                {% endif %}
+            {% else %}
+                <div class="card fade-in-up">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-inbox fa-4x text-muted mb-4"></i>
+                        <h3 class="text-muted mb-3">No se encontraron ofertas</h3>
+                        <p class="text-muted mb-4">
+                            {% if request.GET.search or request.GET.category %}
+                                No hay ofertas que coincidan con tus criterios de búsqueda.
+                                <br>Intenta con otros términos o <a href="{% url 'job_offers' %}" class="text-primary">ver todas las ofertas</a>.
+                            {% else %}
+                                No hay ofertas disponibles en este momento.
+                                <br>Vuelve más tarde para descubrir nuevas oportunidades.
+                            {% endif %}
+                        </p>
+                        <a href="{% url 'job_offers' %}" class="btn btn-primary">
+                            <i class="fas fa-sync me-2"></i>Ver Todas las Ofertas
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Estadísticas -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card fade-in-up">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-bar me-2"></i>Estadísticas del Mercado
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3 col-6 mb-3">
+                            <h4 class="text-primary fw-bold">{{ offers.count }}</h4>
+                            <p class="text-muted mb-0">Ofertas Activas</p>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <h4 class="text-success fw-bold">{{ offers|length }}</h4>
+                            <p class="text-muted mb-0">Empresas</p>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <h4 class="text-warning fw-bold">4</h4>
+                            <p class="text-muted mb-0">Categorías</p>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <h4 class="text-danger fw-bold">24h</h4>
+                            <p class="text-muted mb-0">Actualizado</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .offer-card {
+        transition: all 0.3s ease;
+        border-left: 4px solid #3498db;
+    }
+    
+    .offer-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .offer-card .card-title a:hover {
+        color: #3498db !important;
+    }
+    
+    .pagination .page-link {
+        border-radius: 0.375rem;
+        margin: 0 0.2rem;
+        border: none;
+        color: #3498db;
+    }
+    
+    .pagination .page-item.active .page-link {
+        background: linear-gradient(45deg, #3498db, #2980b9);
+        border: none;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Efectos de hover en las tarjetas de ofertas
+        const offerCards = document.querySelectorAll('.offer-card');
+        offerCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+        
+        // Auto-completar búsqueda
+        const searchInput = document.getElementById('search');
+        const searchSuggestions = document.createElement('div');
+        searchSuggestions.className = 'dropdown-menu w-100';
+        searchSuggestions.style.display = 'none';
+        
+        if (searchInput) {
+            searchInput.parentNode.appendChild(searchSuggestions);
+            
+            searchInput.addEventListener('input', function() {
+                const query = this.value.toLowerCase();
+                
+                if (query.length > 2) {
+                    // Simular sugerencias (en un caso real, esto vendría de una API)
+                    const suggestions = [
+                        'Desarrollador Web',
+                        'Marketing Digital',
+                        'Diseñador Gráfico',
+                        'React Developer',
+                        'Python Django'
+                    ].filter(item => item.toLowerCase().includes(query));
+                    
+                    if (suggestions.length > 0) {
+                        searchSuggestions.innerHTML = suggestions.map(suggestion => 
+                            `<a class="dropdown-item" href="?search=${encodeURIComponent(suggestion)}">${suggestion}</a>`
+                        ).join('');
+                        searchSuggestions.style.display = 'block';
+                    } else {
+                        searchSuggestions.style.display = 'none';
+                    }
+                } else {
+                    searchSuggestions.style.display = 'none';
+                }
+            });
+            
+            // Ocultar sugerencias al hacer clic fuera
+            document.addEventListener('click', function(e) {
+                if (!searchInput.contains(e.target) && !searchSuggestions.contains(e.target)) {
+                    searchSuggestions.style.display = 'none';
+                }
+            });
+        }
+        
+        // Contador de resultados
+        const resultCount = document.querySelector('.badge.bg-primary.fs-6');
+        if (resultCount && offers.length > 0) {
+            // Animación del contador
+            let count = 0;
+            const target = {{ offers.count }};
+            const duration = 2000;
+            const increment = target / (duration / 16);
+            
+            const timer = setInterval(() => {
+                count += increment;
+                if (count >= target) {
+                    count = target;
+                    clearInterval(timer);
+                }
+                resultCount.textContent = Math.floor(count) + ' ofertas disponibles';
+            }, 16);
+        }
+    });
+</script>
+{% endblock %}
